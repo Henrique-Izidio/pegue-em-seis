@@ -24,7 +24,7 @@ Row *createRow(){
 
 }
 
-int insertInRow(Row * row, struct card newCard){
+int insertInRow(Row * row, Card newCard){
 
     if (!row) return 0;
 
@@ -67,16 +67,18 @@ int accessRow(Row *row, Card *card){
     return 1;
 }
 
-int show(Row * row){
+int showRow(Row * row){
 
     if (!row || !(row->start)) return 0;
 
     Element *aux = row->end;
 
     while (aux) {
-        printf("[%d | %d]; ", aux->data.numCard, aux->data.numCows);
+        printf("[%d]; ", aux->data.numCard);
 
         aux = aux->next;
+
+        if(!aux) printf("->");
     }
 
     return 1;

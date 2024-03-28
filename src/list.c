@@ -117,13 +117,15 @@ int showList(List *ldse){
     Element *aux = ldse->start;
 
     while (aux) {
-        printf("[%d]->", aux->data.numCard);
+        printf("[");
+        if(aux->data.numCard < 100) printf("0");
+        if(aux->data.numCard < 10) printf("0");
+        printf("%d]", aux->data.numCard);
 
         aux = aux->next;
 
+        if(!aux) printf("->");
     }
-
-    printf("||");
 
     return 1;
 }

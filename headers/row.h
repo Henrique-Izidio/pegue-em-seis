@@ -10,5 +10,5 @@ Row *createRow();
 int insertInRow(Row *, struct card);
 int removeFromRow(Row *, struct card *);
 int accessRow(Row *, struct card *);
-int show(Row *);
+int showRow(Row *);
 int sizeOfRow(Row *);

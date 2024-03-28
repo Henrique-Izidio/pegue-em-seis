@@ -1,38 +1,26 @@
-#include "../headers/deck.h"
-#include "../headers/card.h"
-#include <stdio.h>
+#include <ncurses.h>
+
+#include "../headers/game.h"
 
 int main() {
 
-    Stack *deck = createDeck();
+    initscr();
+    keypad(stdscr, TRUE);
+    start_color();
+    noecho();
 
-    if(!deck){
-        printf("ERRO: Não foi possivel inicilizar o jogo - CreateDeck");
-        return 0;
+    init_pair(1, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(2, COLOR_WHITE, COLOR_BLACK);
+
+    int opt = menu();
+
+    if (opt == 1) {
+        int palyersNum = getPlayersNum();
+        //play();
     }
 
-    for (int i = 1; i <= 104; i++) {
-        if(!insertInDeck(deck, i)){
-            printf("ERRO: Não foi possivel inicilizar o jogo - InsertInDeck [%d]", i);
-            return 0;
-        }
-    }
+    endwin();
 
-    if (!shuffleDeck(deck)) {
-        printf("ERRO: Não foi possivel inicilizar o jogo - ShuffleDeck");
-    }
+    return 1;
 
-
-    Card card = draw(deck);
-
-    if (card.player == -1) {
-        printf("Ocorreu um erro ao comprar a carta");
-        return 0;
-    }
-
-    printf("[%d]", card.numCard);
-    printf("[%d]", card.numCows);
-    printf("[%d]", card.player);
-
-    return 0;
 }

@@ -5,3 +5,5 @@ struct card {
     int numCows;
     int player;
 };
+
+Card createCard(int);

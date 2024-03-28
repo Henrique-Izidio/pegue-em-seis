@@ -25,28 +25,11 @@ int insertInDeck(Stack * deck, int numCard){
 
         if (!deck) return 0;
 
-        Card nCard;
-
-        nCard.numCard = numCard;
-        nCard.player = 0;
-
-        if (numCard % 10 == 0) {
-            nCard.numCows = 3;
-        } else if (numCard % 5 == 0) {
-
-            nCard.numCows = 2;
-
-            if (numCard % 11 == 0) nCard.numCows += 5;
-
-        }else if (numCard % 11 == 0) {
-            nCard.numCows = 5;
-        }else{
-            nCard.numCows = 1;
-        }
-
         Element *nElement = (Element *)malloc(sizeof(Element));
 
         if (!nElement) return 0;
+
+        Card nCard = createCard(numCard);
 
         nElement->data = nCard;
         nElement->next = deck->top;
@@ -58,7 +41,7 @@ int insertInDeck(Stack * deck, int numCard){
 }
 
 //* Já remove e acessa
-int draw(Stack *deck, Card *card){
+int draw(Stack *deck, struct card *card){
     
     if(!deck || !(deck->height)) return 0;
 
