@@ -1,7 +1,7 @@
+#include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../headers/card.h"
 #include "../headers/row.h"
 
 struct element {
@@ -31,12 +31,19 @@ int insertInRow(Row * row, Card newCard){
     Element *newElement = (Element *)malloc(sizeof(Element));
 
     newElement->ant = NULL;
-    newElement->next = row->end;
+
     newElement->data = newCard;
 
-    row->end->ant = newElement;
+    newElement->next = row->end;
+
+    if (row->size > 0) {
+        row->end->ant = newElement;
+    }else{
+        row->start = newElement;
+    }
 
     row->end = newElement;
+    row->size++;
 
     return 1;
 
@@ -55,6 +62,8 @@ int removeFromRow(Row *row, Card *card){
 
     free(aux);
 
+    row->size--;
+
     return 1;
 }
 
@@ -69,16 +78,19 @@ int accessRow(Row *row, Card *card){
 
 int showRow(Row * row){
 
-    if (!row || !(row->start)) return 0;
+    if (!row || !(row->size)) return 0;
 
-    Element *aux = row->end;
+    Element *aux = row->start;
 
     while (aux) {
-        printf("[%d]; ", aux->data.numCard);
+        printw("[");
+        if (aux->data.numCard < 100) printw("0"); 
+        if (aux->data.numCard < 10) printw("0"); 
+        printw("%d] ", aux->data.numCard);
 
-        aux = aux->next;
+        aux = aux->ant;
 
-        if(!aux) printf("->");
+        if(!aux) printw("->");
     }
 
     return 1;

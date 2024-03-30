@@ -1,7 +1,7 @@
+#include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../headers/card.h"
 #include "../headers/list.h"
 
 struct element {
@@ -36,26 +36,43 @@ int insertInOrder(List *ldse, Card newCard){
 
     if (!(ldse->start)) {
         ldse->start = newElement;
+        ldse->size++;
         return 1;
     }
 
     Element *aux = ldse->start;
 
-    while(aux->next){
-
+    while(aux){
+        
         if (aux->data.numCard > newElement->data.numCard) {
+
             newElement->ant = aux->ant;
-            if (!(aux->ant)) aux->ant->next = newElement;
+
+            if (aux->ant) {
+                aux->ant->next = newElement;
+            }else{
+                ldse->start = newElement;
+            }
+
             newElement->next = aux;
-            ldse->size += 1;
+            aux->ant = newElement;
+
+            ldse->size++;
+
             return 1;
+        }
+
+        if (aux->next) {
+            aux = aux->next;
+        }else{
+            break;
         }
 
     }
 
-    newElement->next = aux->next;
+    newElement->ant = aux;
     aux->next = newElement;
-    ldse->size += 1;
+    ldse->size++;
 
     return 1;
 }
@@ -102,7 +119,7 @@ int removeIndex(List *ldse, int index){
     if (index == 1) ldse->start = aux->next;
     if(aux->ant) aux->ant->next = aux->next;
     if(aux->next)aux->next->ant = aux->ant;
-    ldse->size -= 1;
+    ldse->size--;
 
     free(aux);
 
@@ -110,21 +127,32 @@ int removeIndex(List *ldse, int index){
 
 }
 
-int showList(List *ldse){
+int showList(List *ldse, int opt){
 
     if (!ldse) return 0;
 
     Element *aux = ldse->start;
+    int counter = 1;
 
     while (aux) {
-        printf("[");
-        if(aux->data.numCard < 100) printf("0");
-        if(aux->data.numCard < 10) printf("0");
-        printf("%d]", aux->data.numCard);
+        if(opt == counter) attron(COLOR_PAIR(1));
+        else attron(COLOR_PAIR(2));
+
+        printw("[");
+
+        if(aux->data.numCard < 100) printw("0");
+        
+        if(aux->data.numCard < 10) printw("0");
+        
+        printw("%d]", aux->data.numCard);
+
+        attroff(COLOR_PAIR(1));
+        attroff(COLOR_PAIR(2));
 
         aux = aux->next;
+        if(aux) printw("->");
 
-        if(!aux) printf("->");
+        counter++;
     }
 
     return 1;

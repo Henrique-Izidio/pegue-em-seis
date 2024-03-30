@@ -1,116 +1,149 @@
-#include <stdio.h>
+#include <ncurses.h>
 #include <stdlib.h>
 
 #include "../headers/card.h"
-#include "../headers/game.h"
-#include "../headers/deck.h"
 #include "../headers/list.h"
+#include "../headers/deck.h"
 #include "../headers/row.h"
 #include "../headers/player.h"
+#include "../headers/game.h"
 
 
 int play(int playersNum){
 
-    int setupGame(Stack *, Row **, PlayerHand *, int);
-    void printTable(Row **, PlayerHand);
+    int setupRound(Stack *, Row **, PlayerHand *, int);
+    PlayerHand *createHands(int);
+    Row **createBoard();
+    int selectFRomHand(Row **, PlayerHand);
 
-    Stack *deck;
-    PlayerHand *players; 
-    Row **table; 
+    Stack *deck = createDeck();
+    PlayerHand *players = createHands(playersNum);
+    Row **table = createBoard();
 
-
-    if(!setupGame(deck, table, players, playersNum)){
-        printf("Não foi possivel iniciar o jogo");
+    if (!players) {
+        printw("Não foi possivel iniciar o jogo");
 
         return 0;
     }
 
-    printTable(table, players[0]);
+    for (int i = 0; i < playersNum; i++) {        
+        players[i].hand = createList();
+
+        players[i].collection = createList();;
+    }
+
+    if(!setupRound(deck, table, players, playersNum)){
+        printw("Não foi possivel iniciar o jogo");
+
+        return 0;
+    }
+
+    selectFRomHand(table, players[0]);
 
     return 1;
 }
 
-int setupGame(Stack *deck, Row **table, PlayerHand *players, int playersNum){
-    deck = createDeck();
+int setupRound(Stack *deck, Row **table, PlayerHand *players, int playersNum){
 
-    for (int i = 1; i <= 104; i++) {
+    if (!deck || !table || !players) return 0;
+
+    for (int i = 104; i >= 1; i--) {
         if(!insertInDeck(deck, i)) return 0;
     }
 
     if(!shuffleDeck(deck)) return 0;
 
-    table = (Row **)malloc(4 * sizeof(Row *));
+    Card *newCard = (Card *)malloc(sizeof(Card));
 
-    if (!table) return 0;
+    if (!newCard) return 0;
 
     for (int i = 0; i < 4; i++) {
-        table[i] = (Row *)malloc(sizeof(Row));
+
+        draw(deck, newCard);
+
         if (!table[i]) return 0;
+
+        insertInRow(table[i], *newCard);
     }
-
-    players = (PlayerHand *)malloc(playersNum * sizeof(PlayerHand));
-
-    if(!players) return 0;
 
     for (int i = 0; i < playersNum; i++) {
-        players[i].player = i+1;
 
-        List *hand = (List *)malloc(sizeof(List));
+        if (!(players[i].hand) || !(players[i].collection)) return 0;
 
-        if (!hand) return 0;
+        for (int j = 0; j < 10; j++) {
+            draw(deck, newCard);
+            insertInOrder(players[i].hand, *newCard);
+        }
         
-        players[i].hand = hand;
-
-        List *collection = (List *)malloc(sizeof(List));
-
-        if (!collection) return 0;
-
-        players[i].collection = collection;
-    }
-
-    Card *newCard;
-
-    for (int i = 0; i < 4; i++) {
-        draw(deck, newCard);
-        insertInRow(table[i], *newCard);
     }
     
     return 1;
 }
 
-void printTable(Row **table, PlayerHand player){
+int selectFRomHand(Row **table, PlayerHand player){
+
+    int printBoard(Row **, PlayerHand, int);
+
+    int opt = 1;
+    int ch = 1;
+
+    while(ch != '\n'){
+
+        printBoard(table, player, opt);
+
+        ch = getch();
+
+        if(ch == KEY_LEFT && opt > 1) opt -= 1;
+        if(ch == KEY_RIGHT && opt < player.hand->size) opt += 1;
+
+    }
+
+    return opt;
+
+}
+
+int printBoard(Row **table, PlayerHand player, int opt){
+
+    if (!table) return 0;
+
+    clear();
 
     for (int i = 0; i < 4; i++) {
         
         Row *actual = table[i];
+        
+        printw("\n%d: ", i+1);
 
         showRow(actual);
-
-        printf("\n");
-
     }
 
-    printf("Sua coleção: ");
+    printw("\n Sua coleção: \n");
 
-    showList(player.collection);
+    showList(player.collection, 0);
 
+    printw("\nEscolha qual carta da sua mão jogar...\n");
 
-    printf("\nSua mão:\n");
-    
-    showList(player.hand);
+    showList(player.hand, opt);
 
-    printf("\n");
+    return 1;
 
-    for (int i = 1; i <= (player.hand)->size; i++) {
+}
 
-        printf("( %d )", i);
+PlayerHand *createHands(int playersNum){
 
-        if(i != (player.hand)->size) printf("  ");
+    PlayerHand *players = (PlayerHand *)malloc(playersNum * sizeof(PlayerHand));
 
-    }
+    return players;
+}
 
-    printf("\n\n");
+Row **createBoard(){
+    Row **table = (Row **)malloc(4 * sizeof(Row *));
 
-    printf("Escolha qual carta da sua mão jogar...\n-> ");
+    if (!table) return 0;
 
+    for (int i = 0; i < 4; i++) {
+        table[i] = createRow();
+    }; 
+
+    return table;
 }

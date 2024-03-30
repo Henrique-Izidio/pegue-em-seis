@@ -1,3 +1,5 @@
+#include "card.h"
+
 typedef struct element Element;
 
 typedef struct row {

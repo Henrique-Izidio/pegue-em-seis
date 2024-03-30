@@ -14,10 +14,11 @@ int main() {
 
     int opt = menu();
 
-    if (opt == 1) {
-        int palyersNum = getPlayersNum();
-        //play();
-    }
+    if (opt == 1) play(getPlayersNum());
+
+    printw("\n\nrodou tudo\n");
+
+    getch();
 
     endwin();
 

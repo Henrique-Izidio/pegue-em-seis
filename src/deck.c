@@ -1,7 +1,7 @@
+#include <ncurses.h>
 #include <stdlib.h>
 #include <time.h>
 
-#include "../headers/card.h"
 #include "../headers/deck.h"
 
 struct element {
@@ -35,23 +35,27 @@ int insertInDeck(Stack * deck, int numCard){
         nElement->next = deck->top;
 
         deck->top = nElement;
-        deck->height += 1;
+        deck->height++;
 
         return 1;
 }
 
 //* Já remove e acessa
-int draw(Stack *deck, struct card *card){
+int draw(Stack *deck, Card *card){
     
     if(!deck || !(deck->height)) return 0;
 
     Element *aux = deck->top;
 
+    if (!aux) return 0;
+    
     deck->top = aux->next;
 
-    deck->height -= 1;
-
     *card = aux->data;
+
+    free(aux);
+
+    deck->height--;
 
     return 1;
 }
@@ -87,4 +91,23 @@ int shuffleDeck(Stack *deck){
 
 int deckHeight(Stack *deck){
     return deck->height;
+}
+
+void printDeck(Stack *deck){
+
+    if (!deck) return;
+
+    Element *aux = deck->top;
+
+    while (aux) {
+        printw("%d -> ", aux->data.numCard);
+        if (aux->data.numCard % 20 == 0) {
+            printw("\n");
+        }
+        aux = aux->next;
+    }
+
+    printw(" || ");
+
+    return;
 }

@@ -1,3 +1,5 @@
+#include "card.h"
+
 typedef struct element Element;
 
 typedef struct list{
@@ -5,9 +7,9 @@ typedef struct list{
     int size;
 } List;
 
-List *create();
+List *createList();
 int insertInOrder(List *, struct card);
 int accesIndex(List *, int, struct card *);
 int removeIndex(List *, int);
-int showList(List *);
+int showList(List *, int);
 int sizeList(List *);
