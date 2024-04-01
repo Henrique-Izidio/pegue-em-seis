@@ -30,6 +30,8 @@ int insertInRow(Row * row, Card newCard){
 
     RowElement *newElement = (RowElement *)malloc(sizeof(RowElement));
 
+    if (!newElement) return 0;
+
     newElement->ant = NULL;
 
     newElement->data = newCard;
@@ -53,12 +55,13 @@ int removeFromRow(Row *row, Card *card){
 
     if (!row || !(row->start)) return 0;
     
-    *card = createCard(row->start->data.numCard);
-    
     RowElement *aux = row->start;
 
+    *card = createCard(aux->data.numCard);
+
     row->start = aux->ant;
-    row->start->next = NULL;
+    if(row->start) row->start->next = NULL;
+    else row->end = NULL;
 
     row->size--;
 
@@ -71,7 +74,7 @@ int accessStartRow(Row *row, Card *card){
     
     if (!row || !(row->start)) return 0;
     
-    *card = row->start->data;
+    *card = createCard(row->start->data.numCard);
 
     return 1;
 }
@@ -80,7 +83,7 @@ int accessEndRow(Row *row, Card *card){
     
     if (!row || !(row->end)) return 0;
     
-    *card = row->end->data;
+    *card = createCard(row->end->data.numCard);
 
     return 1;
 }
@@ -99,7 +102,7 @@ int showRow(Row * row){
 
         aux = aux->ant;
 
-        if(!aux) printw("->");
+        if(aux) printw("->");
     }
 
     return 1;
@@ -107,8 +110,6 @@ int showRow(Row * row){
 }
 
 int sizeOfRow(Row *row){
-    
     if (!row) return -1;
-
     return row->size;
 }

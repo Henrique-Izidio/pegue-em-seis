@@ -1,9 +1,9 @@
 #include "card.h"
 
-typedef struct element Element;
+typedef struct listElement ListElement;
 
 typedef struct list{
-    struct element *start;
+    struct listElement *start;
     int size;
 } List;
 
@@ -13,3 +13,4 @@ int accesIndex(List *, int, struct card *);
 int removeIndex(List *, int);
 int showList(List *, int);
 int sizeList(List *);
+int countPoints(List *);

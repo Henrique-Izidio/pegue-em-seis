@@ -4,10 +4,10 @@
 
 #include "../headers/list.h"
 
-struct element {
+struct listElement {
     Card data;
-    Element *next;
-    Element *ant;
+    ListElement *next;
+    ListElement *ant;
 };
 
 List *createList(){
@@ -26,7 +26,7 @@ int insertInOrder(List *ldse, Card newCard){
 
     if (!ldse) return 0;
 
-    Element *newElement = (Element *)malloc(sizeof(Element));
+    ListElement *newElement = (ListElement *)malloc(sizeof(ListElement));
 
     if (!newElement) return 0;
 
@@ -40,10 +40,9 @@ int insertInOrder(List *ldse, Card newCard){
         return 1;
     }
 
-    Element *aux = ldse->start;
+    ListElement *aux = ldse->start;
 
     while(aux){
-        
         if (aux->data.numCard > newElement->data.numCard) {
 
             newElement->ant = aux->ant;
@@ -62,11 +61,8 @@ int insertInOrder(List *ldse, Card newCard){
             return 1;
         }
 
-        if (aux->next) {
-            aux = aux->next;
-        }else{
-            break;
-        }
+        if (aux->next) aux = aux->next;
+        else break;
 
     }
 
@@ -81,7 +77,7 @@ int accesIndex(List *ldse, int index, Card *card){
 
     if (!ldse || !(ldse->start)) return 0;
 
-    Element *aux = ldse->start;
+    ListElement *aux = ldse->start;
     int counter = 1;
 
     while(aux && counter < index){
@@ -94,7 +90,7 @@ int accesIndex(List *ldse, int index, Card *card){
 
     if(!aux) return 0;
 
-    *card = aux->data;
+    *card = createCard(aux->data.numCard);
 
     return 1;
 }
@@ -103,7 +99,7 @@ int removeIndex(List *ldse, int index){
 
     if (!ldse || !(ldse->start)) return 0;
 
-    Element *aux = ldse->start;
+    ListElement *aux = ldse->start;
     int counter = 1;
 
     while(aux && counter < index){
@@ -121,6 +117,8 @@ int removeIndex(List *ldse, int index){
     if(aux->next)aux->next->ant = aux->ant;
     ldse->size--;
 
+    free(aux);
+
     return 1;
 
 }
@@ -129,7 +127,7 @@ int showList(List *ldse, int opt){
 
     if (!ldse) return 0;
 
-    Element *aux = ldse->start;
+    ListElement *aux = ldse->start;
     int counter = 1;
 
     while (aux) {
@@ -159,4 +157,20 @@ int showList(List *ldse, int opt){
 int sizeList(List *ldse){
     if(!ldse) return -1;
     return ldse->size;
+}
+
+int countPoints(List *collection){
+
+    if (!collection) return 0;
+
+    int points = 0;
+
+    ListElement *aux = collection->start;
+
+    while (aux) {
+        points += aux->data.numCows;
+        aux = aux->next;
+    }
+
+    return points;
 }

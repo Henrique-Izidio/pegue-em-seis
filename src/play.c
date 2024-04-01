@@ -40,13 +40,14 @@ int play(int playersNum){
         return 0;
     }
 
+    Card *auxCard_01 = (Card *)malloc(sizeof(Card));
+    Card *auxCard_02 = (Card *)malloc(sizeof(Card));
+    List *auxList = createList();
+
     while (players[0].hand->size) {
 
         int handIndex = selectFRomHand(table, players[0]);
 
-        Card *auxCard_01 = (Card *)malloc(sizeof(Card));
-        Card *auxCard_02 = (Card *)malloc(sizeof(Card));
-        List *auxList = createList();
 
         for (int i = 0; i < playersNum; i++) {
             if (i) { // se i > 0 -> vez do BOT
@@ -60,7 +61,7 @@ int play(int playersNum){
             insertInOrder(auxList, *auxCard_01);
         }
 
-        for (int i = 1; i <= playersNum; i++) {
+        for (int i = 0; i < playersNum; i++) {
             accesIndex(auxList, 1, auxCard_01);
             removeIndex(auxList, 1);
 
@@ -78,17 +79,38 @@ int play(int playersNum){
 
             if(tableIndex == -1) {
                 tableIndex = selectRow(table);
-                getRow(players[i-1].collection, table[handIndex]);
+                if(!getRow(players[auxCard_01->player].collection, table[tableIndex])){
+                    printw("\nOcorreu um erro\n");
+                    getch();
+                }
             }
             
             insertInRow(table[tableIndex], *auxCard_01);
 
             if (table[tableIndex]->size >= 6) {
-                getRow(players[i-1].collection, table[handIndex]);
-                // get row 
+                if(!getRow(players[auxCard_01->player].collection, table[tableIndex])){
+                    printw("\nOcorreu um erro\n");
+                    getch();
+                }
             }
+
+            players[auxCard_01->player].points = countPoints(players[auxCard_01->player].collection);
         }
     }
+
+    int winner, temp = 0;
+
+    for (int i = 0; i < playersNum; i++) {
+        if (temp > players[i].points || i == 0) {
+            winner = i;
+        }
+    }
+
+    clear();
+
+    printw("Parabens ao vencedor!\n Jogador Nº %d", winner+1);
+
+    getch();
 
     return 1;
 }
@@ -122,6 +144,7 @@ int setupRound(Stack *deck, Row **table, PlayerHand *players, int playersNum){
 
         for (int j = 0; j < 10; j++) {
             draw(deck, newCard);
+            newCard->player = i+1;
             insertInOrder(players[i].hand, *newCard);
         }
         
@@ -151,7 +174,6 @@ int selectFRomHand(Row **table, PlayerHand player){
     }
 
     return opt;
-
 }
 
 int printBoard(Row **table, PlayerHand player, int opt){
@@ -209,16 +231,13 @@ int getRow(List *collection, Row *row){
         getch();
     }
 
-    printw("Não foi possivel alocar");
-    getch();
+    int originalSize = sizeOfRow(row);
     
     for (int i = 0; i < 5; i++) {
-        removeFromRow(row, auxCard);
+        if (i == originalSize) break;
 
-        printw("teste");
-        getch();
-
-        insertInOrder(collection, *auxCard);
+        if(!removeFromRow(row, auxCard)) return 0;
+        if(!insertInOrder(collection, *auxCard)) return 0;
     }
 
     free(auxCard);
@@ -228,8 +247,8 @@ int getRow(List *collection, Row *row){
 
 int selectRow(Row **board){
 
-    int opt = 1;
-    int ch = 1;
+    int opt = 0;
+    int ch = 0;
 
     while(ch != '\n'){
 

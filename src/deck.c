@@ -51,7 +51,7 @@ int draw(Stack *deck, Card *card){
     
     deck->top = aux->next;
 
-    *card = aux->data;
+    *card = createCard(aux->data.numCard);
 
     free(aux);
 
@@ -83,31 +83,12 @@ int shuffleDeck(Stack *deck){
         aux->data = deck->top->data;
 
         deck->top->data = temp;
-
     }
 
     return 1;
 }
 
 int deckHeight(Stack *deck){
+    if (!deck) return -1;
     return deck->height;
-}
-
-void printDeck(Stack *deck){
-
-    if (!deck) return;
-
-    Element *aux = deck->top;
-
-    while (aux) {
-        printw("%d -> ", aux->data.numCard);
-        if (aux->data.numCard % 20 == 0) {
-            printw("\n");
-        }
-        aux = aux->next;
-    }
-
-    printw(" || ");
-
-    return;
 }
