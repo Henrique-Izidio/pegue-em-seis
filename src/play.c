@@ -78,7 +78,12 @@ int play(int playersNum){
             }
 
             if(tableIndex == -1) {
-                tableIndex = selectRow(table);
+                if (i == 0) {
+                    tableIndex = selectRow(table);
+                }else{
+                    srand(time(NULL));
+                    tableIndex = rand() % 4; 
+                }
                 if(!getRow(players[auxCard_01->player].collection, table[tableIndex])){
                     printw("\nOcorreu um erro\n");
                     getch();
