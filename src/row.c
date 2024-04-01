@@ -4,10 +4,10 @@
 
 #include "../headers/row.h"
 
-struct element {
+struct rowElement {
     Card data;
-    Element *next;
-    Element *ant;
+    RowElement *next;
+    RowElement *ant;
 };
 
 Row *createRow(){
@@ -28,7 +28,7 @@ int insertInRow(Row * row, Card newCard){
 
     if (!row) return 0;
 
-    Element *newElement = (Element *)malloc(sizeof(Element));
+    RowElement *newElement = (RowElement *)malloc(sizeof(RowElement));
 
     newElement->ant = NULL;
 
@@ -53,21 +53,21 @@ int removeFromRow(Row *row, Card *card){
 
     if (!row || !(row->start)) return 0;
     
-    *card = row->start->data;
+    *card = createCard(row->start->data.numCard);
     
-    Element *aux = row->start;
+    RowElement *aux = row->start;
 
     row->start = aux->ant;
     row->start->next = NULL;
 
-    free(aux);
-
     row->size--;
+
+    free(aux);
 
     return 1;
 }
 
-int accessRow(Row *row, Card *card){
+int accessStartRow(Row *row, Card *card){
     
     if (!row || !(row->start)) return 0;
     
@@ -76,11 +76,20 @@ int accessRow(Row *row, Card *card){
     return 1;
 }
 
+int accessEndRow(Row *row, Card *card){
+    
+    if (!row || !(row->end)) return 0;
+    
+    *card = row->end->data;
+
+    return 1;
+}
+
 int showRow(Row * row){
 
     if (!row || !(row->size)) return 0;
 
-    Element *aux = row->start;
+    RowElement *aux = row->start;
 
     while (aux) {
         printw("[");

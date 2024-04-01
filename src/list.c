@@ -121,8 +121,6 @@ int removeIndex(List *ldse, int index){
     if(aux->next)aux->next->ant = aux->ant;
     ldse->size--;
 
-    free(aux);
-
     return 1;
 
 }

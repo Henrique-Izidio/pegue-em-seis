@@ -12,14 +12,13 @@ int main() {
     init_pair(1, COLOR_YELLOW, COLOR_BLACK);
     init_pair(2, COLOR_WHITE, COLOR_BLACK);
 
-    int opt = menu();
+    int opt;
 
-    if (opt == 1) play(getPlayersNum());
+    while (opt) {
+        opt = menu();
 
-    printw("\n\nrodou tudo\n");
-
-    getch();
-
+        if (opt == 1) play(getPlayersNum());
+    }
     endwin();
 
     return 1;

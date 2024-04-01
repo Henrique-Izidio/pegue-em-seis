@@ -1,16 +1,17 @@
 #include "card.h"
 
-typedef struct element Element;
+typedef struct rowElement RowElement;
 
 typedef struct row {
-    Element *start;
-    Element *end;
+    RowElement *start;
+    RowElement *end;
     int size;
 } Row;
 
 Row *createRow();
 int insertInRow(Row *, struct card);
 int removeFromRow(Row *, struct card *);
-int accessRow(Row *, struct card *);
+int accessStartRow(Row *, struct card *);
+int accessEndRow(Row *, struct card *);
 int showRow(Row *);
 int sizeOfRow(Row *);
